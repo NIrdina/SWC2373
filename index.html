@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webex Troubleshooting Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            padding: 30px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
+
+        input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .flash-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .user-info, .room-list, .message-display {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            input[type="text"], input[type="submit"] {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Webex Troubleshooting Tool</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-message">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Form for Webex Access Token -->
+        <form method="POST">
+            <div class="form-section">
+                <label for="access_token">Access Token:</label>
+                <input type="text" id="access_token" name="access_token" placeholder="Enter your Webex access token" required>
+            </div>
+
+            <!-- Option 0: Test Connection -->
+            <div class="form-section">
+                <input type="submit" name="test_connection" value="Test Connection">
+            </div>
+
+            <!-- Option 1: Display User Information -->
+            <div class="form-section">
+                <input type="submit" name="get_user_info" value="Display User Information">
+            </div>
+
+            <!-- Option 2: List Rooms -->
+            <div class="form-section">
+                <input type="submit" name="list_rooms" value="List Rooms">
+            </div>
+
+            <!-- Option 3: Create a Room -->
+            <div class="form-section">
+                <label for="room_title">Room Title:</label>
+                <input type="text" id="room_title" name="room_title" placeholder="Enter the room title">
+                <input type="submit" name="create_room" value="Create Room">
+            </div>
+
+           <!-- Option 4: Send Message to a Room -->
+<div class="form-section">
+    <label for="room_id">Room ID:</label>
+    <input type="text" id="room_id" name="room_id" placeholder="Enter the room ID" required>
+    <label for="message">Message:</label>
+    <input type="text" id="message" name="message" placeholder="Enter your message" required>
+    <input type="submit" name="send_message" value="Send Message">
+</div>
+
+
+        <!-- User Information Display -->
+        {% if user_info %}
+        <div class="user-info">
+            <h2>User Information</h2>
+            <ul>
+                <li><strong>Name:</strong> {{ user_info.displayName }}</li>
+                <li><strong>Email:</strong> {{ user_info.emails[0] }}</li>
+                <li><strong>Org ID:</strong> {{ user_info.orgId }}</li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Rooms Information Display -->
+        {% if rooms_info %}
+        <div class="room-list">
+            <h2>Rooms List</h2>
+            <ul>
+                {% for room in rooms_info %}
+                <li><strong>Room ID:</strong> {{ room.id }} | <strong>Room Title:</strong> {{ room.title }} | <strong>Created At:</strong> {{ room.created }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Message Display Section -->
+{% if sent_message %}
+<div class="message-display">
+    <h2>Message Sent</h2>
+    <p><strong>Room ID:</strong> {{ sent_message.room_id }}</p>
+    <p><strong>Message:</strong> {{ sent_message.message_content }}</p>
+    <p><strong>Status:</strong> {{ sent_message.status }}</p>
+</div>
+{% endif %}
+
+    </div>
+</body>
+</html>
